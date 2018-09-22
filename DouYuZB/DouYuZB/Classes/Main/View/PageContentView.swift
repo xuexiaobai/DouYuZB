@@ -14,12 +14,12 @@ class PageContentView: UIView {
 
     // MARK:设置属性
     private var childVCs : [UIViewController]
-    private var parentViewController : UIViewController
+    private weak var parentViewController : UIViewController?
     // MARK:懒加载CollectionView
-    private lazy var collectionView : UICollectionView = {
+    private lazy var collectionView : UICollectionView = {[weak self] in
         //1.Layout
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = self.bounds.size
+        layout.itemSize = (self?.bounds.size)!
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         layout.scrollDirection = .horizontal
@@ -34,7 +34,7 @@ class PageContentView: UIView {
         return collectionView
     }()
     // MARK:初始化
-    init(frame: CGRect, childVCs: [UIViewController], parentViewController: UIViewController) {
+    init(frame: CGRect, childVCs: [UIViewController], parentViewController: UIViewController?) {
         self.childVCs = childVCs
         self.parentViewController = parentViewController
         super.init(frame: frame)
@@ -53,7 +53,7 @@ extension PageContentView {
     private func setupUI() {
         //1.将所有自控制器放到主控制器里面
         for childVC in childVCs {
-            parentViewController.addChildViewController(childVC)
+            parentViewController?.addChildViewController(childVC)
         }
         //2.CollectionView加载设置大小
         addSubview(collectionView)

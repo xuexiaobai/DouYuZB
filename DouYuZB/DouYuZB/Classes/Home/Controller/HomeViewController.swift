@@ -18,7 +18,7 @@ class HomeViewController: UIViewController {
         return pageTitleView
     }()
     // MARK:懒加载ContentView
-    private lazy var pageContentView : PageContentView = {
+    private lazy var pageContentView : PageContentView = {[weak self] in
         //1.获取Content位置、大小
         let contentH = kScreenH - kTopBarH - kTitleViewH - kBottomH - kTabBarH
         let contentFrame = CGRect(x: 0, y: kTopBarH + kTitleViewH, width: kScreenW, height: contentH)
