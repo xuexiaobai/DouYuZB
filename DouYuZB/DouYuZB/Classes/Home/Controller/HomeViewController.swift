@@ -8,8 +8,17 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+private let kTitleViewH: CGFloat = 40
 
+class HomeViewController: UIViewController {
+    
+    private lazy var pageTitleView : PageTitleView = {
+        let titles = ["推荐","游戏","娱乐","旅游"]
+        let pageTitleView = PageTitleView(frame: CGRect(x: 0, y: kStatusBarH + kNavigationBarH, width: kScreenW, height: kTitleViewH), titles: titles)
+        return pageTitleView
+    }()
+    
+    // MARK:系统的回调函数
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -18,9 +27,18 @@ class HomeViewController: UIViewController {
 
 extension HomeViewController {
     private func setupUI() {
+        //0.不要添加内边距
+        if #available(iOS 11.0, *) {
+            
+        } else {
+            automaticallyAdjustsScrollViewInsets = false
+        }
+        //1.导航栏
         setupNavigationBar()
+        //2.添加TitleView
+        view.addSubview(pageTitleView)
     }
-    
+    // MARK:创建NavigationBar
     private func setupNavigationBar() {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(imageName: "logo")
