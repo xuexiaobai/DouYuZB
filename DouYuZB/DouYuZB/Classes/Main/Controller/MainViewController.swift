@@ -17,7 +17,6 @@ class MainViewController: UITabBarController {
         addChildVC("Live")
         addChildVC("Follow")
         addChildVC("Profile")
-        self.tabBar.tintColor = UIColor.orange;
     }
     
     fileprivate func addChildVC(_ storyName: String) {
