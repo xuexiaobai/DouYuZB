@@ -11,13 +11,28 @@ import UIKit
 private let kTitleViewH: CGFloat = 40
 
 class HomeViewController: UIViewController {
-    
+    // MARK:懒加载TitleView
     private lazy var pageTitleView : PageTitleView = {
         let titles = ["推荐","游戏","娱乐","旅游"]
         let pageTitleView = PageTitleView(frame: CGRect(x: 0, y: kStatusBarH + kNavigationBarH, width: kScreenW, height: kTitleViewH), titles: titles)
         return pageTitleView
     }()
-    
+    // MARK:懒加载ContentView
+    private lazy var pageContentView : PageContentView = {
+        //1.获取Content位置、大小
+        let contentH = kScreenH - kTopBarH - kTitleViewH - kBottomH - kTabBarH
+        let contentFrame = CGRect(x: 0, y: kTopBarH + kTitleViewH, width: kScreenW, height: contentH)
+        //2.生成ChildViewControllers
+        var childVCs = [UIViewController]()
+        for _ in 0..<4 {
+            let viewController = UIViewController()
+            viewController.view.backgroundColor = UIColor(r: CGFloat(arc4random_uniform(255)), g: CGFloat(arc4random_uniform(255)), b: CGFloat(arc4random_uniform(255)))
+            childVCs.append(viewController)
+        }
+        //3.实例化ContentView
+        let pageContentView = PageContentView(frame: contentFrame, childVCs: childVCs, parentViewController: self)
+        return pageContentView
+    }()
     // MARK:系统的回调函数
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +52,8 @@ extension HomeViewController {
         setupNavigationBar()
         //2.添加TitleView
         view.addSubview(pageTitleView)
+        //3.添加ContentView
+        view.addSubview(pageContentView)
     }
     // MARK:创建NavigationBar
     private func setupNavigationBar() {
