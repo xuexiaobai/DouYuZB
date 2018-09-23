@@ -81,3 +81,16 @@ extension PageContentView : UICollectionViewDataSource {
         return cell
     }
 }
+
+// MARK:对外暴露的方法
+extension PageContentView {
+    func setCurrentIndex(currentIndex: Int) {
+        //第一种方法.设置偏移量
+//        let contentOffsetX = CGFloat(currentIndex) * collectionView.frame.width
+//        collectionView.setContentOffset(CGPoint(x: contentOffsetX, y: 0), animated: false)
+        //第二种方法.滚动到指定位置
+        let indexPath = NSIndexPath(item: currentIndex, section: 0)
+        collectionView.scrollToItem(at: indexPath as IndexPath, at: .centeredHorizontally, animated: false)
+        
+    }
+}

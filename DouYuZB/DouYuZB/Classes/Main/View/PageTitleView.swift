@@ -11,10 +11,18 @@ import UIKit
 private let kScrollLineH : CGFloat = 2
 private let kBottomLineH : CGFloat = 0.5
 
+// MARK:设置代理
+protocol PageTitleViewDelegate : class {
+    func pageTitleView(titleView : PageTitleView, selectedIndex index : Int)
+}
+
 class PageTitleView: UIView {
     // MARK:定义属性
+    private var currentLabelIndex : Int = 0
     private var titles : [String]
     private lazy var titleLabels : [UILabel] = [UILabel]()
+    // MARK:代理属性
+    weak var delegate : PageTitleViewDelegate?
     // MARK:定义ScrollView 闭包
     private lazy var scrollView : UIScrollView = {
         let scrollView = UIScrollView();
@@ -80,6 +88,10 @@ extension PageTitleView {
             scrollView.addSubview(label)
             //5.label添加到数组中
             titleLabels.append(label)
+            //6.添加手势
+            label.isUserInteractionEnabled = true
+            let tapGes = UITapGestureRecognizer.init(target: self, action: #selector(titleLabelClick(tapGes:)))
+            label.addGestureRecognizer(tapGes)
         }
     }
     
@@ -96,5 +108,29 @@ extension PageTitleView {
         firstLabel.textColor = UIColor.orange
         scrollLine.frame = CGRect(x: firstLabel.frame.origin.x, y: frame.height - kScrollLineH, width: firstLabel.frame.size.width, height: kScrollLineH)
         scrollView.addSubview(scrollLine)
+    }
+}
+
+extension PageTitleView {
+    // MARK:Label的点击事件
+    @objc private func titleLabelClick(tapGes: UITapGestureRecognizer) {
+        //1.获取当前Label
+        guard let currentLabel = tapGes.view as? UILabel else {
+            return
+        }
+        //2.获取之前的Label
+        let oldLabel = titleLabels[currentLabelIndex];
+        //3.更新当前的Index
+        currentLabelIndex = currentLabel.tag
+        //4.修改颜色
+        oldLabel.textColor = UIColor.black
+        currentLabel.textColor = UIColor.orange
+        //5.修改滑块的位置
+        let scrollLineX = CGFloat(currentLabelIndex) * scrollLine.frame.width
+        UIView.animate(withDuration: 0.2) {
+            self.scrollLine.frame.origin.x = scrollLineX
+        }
+        //6.设置代理方法
+        delegate?.pageTitleView(titleView: self, selectedIndex: currentLabelIndex)
     }
 }
