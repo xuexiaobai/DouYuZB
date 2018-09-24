@@ -57,6 +57,9 @@ class RecommendViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         
+        NetworkHelper.requestData(type: .GET, urlString: "http://httpbin.org/get") { (response) in
+            print(response)
+        }
     }
     
 }
