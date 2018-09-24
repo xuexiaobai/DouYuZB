@@ -25,7 +25,8 @@ class HomeViewController: UIViewController {
         let contentFrame = CGRect(x: 0, y: kTopBarH + kTitleViewH, width: kScreenW, height: contentH)
         //2.生成ChildViewControllers
         var childVCs = [UIViewController]()
-        for _ in 0..<4 {
+        childVCs.append(RecommendViewController())
+        for _ in 0 ..< 3 {
             let viewController = UIViewController()
             viewController.view.backgroundColor = UIColor(r: CGFloat(arc4random_uniform(255)), g: CGFloat(arc4random_uniform(255)), b: CGFloat(arc4random_uniform(255)))
             childVCs.append(viewController)
