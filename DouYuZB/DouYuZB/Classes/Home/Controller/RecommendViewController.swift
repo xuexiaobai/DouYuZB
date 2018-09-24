@@ -11,7 +11,8 @@ import UIKit
 // MARK:设置变量
 private let kItemMargin : CGFloat = 10
 private let kItemW : CGFloat = (kScreenW - 3 * kItemMargin) / 2
-private let kItemH : CGFloat = kItemW * 3 / 4
+private let kNormalItemH : CGFloat = kItemW * 3 / 4
+private let kPrettyItemH : CGFloat = kItemW * 4 / 3
 private let kHeaderH : CGFloat = 44
 
 private let kSection = 12
@@ -19,6 +20,7 @@ private let kFirstSectionItem = 8
 private let kSectionItem = 4
 
 private let kNormalCellID = "kNormalCellID"
+private let kPrettyCellID = "kPrettyCellID"
 private let kHeaderID = "kHeaderID"
 
 class RecommendViewController: UIViewController {
@@ -26,21 +28,25 @@ class RecommendViewController: UIViewController {
     private lazy var collectionView : UICollectionView = {[unowned self] in
         //1.设置Layout
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: kItemW, height: kItemH)
+        layout.itemSize = CGSize(width: kItemW, height: kNormalItemH)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = kItemMargin
         layout.sectionInset = UIEdgeInsetsMake(0, kItemMargin, 0, kItemMargin)
+        layout.scrollDirection = .vertical
         //设置CollectionView的组头
         layout.headerReferenceSize = CGSize(width: kScreenW, height: kHeaderH)
         //2.初始化CollectionView
         let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor.groupTableViewBackground
+        collectionView.backgroundColor = UIColor.white
+        collectionView.showsVerticalScrollIndicator = false
         //3.设置代理
         collectionView.dataSource = self
+        collectionView.delegate = self
         //4.注册Cell
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: kNormalCellID)
+        collectionView.register(UINib(nibName: "CollectionNormalCell", bundle: nil), forCellWithReuseIdentifier: kNormalCellID)
+        collectionView.register(UINib(nibName: "CollectionPrettyCell", bundle: nil), forCellWithReuseIdentifier: kPrettyCellID)
         //5.注册Header
-        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: kHeaderID)
+        collectionView.register(UINib(nibName: "CollectionHeaderView", bundle: nil), forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: kHeaderID)
         
         return collectionView
     }()
@@ -82,15 +88,30 @@ extension RecommendViewController : UICollectionViewDataSource {
     }
     //设置Cell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.section == 1 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kPrettyCellID, for: indexPath)
+            return cell
+        }
+        
         let cell = collectionView .dequeueReusableCell(withReuseIdentifier: kNormalCellID, for: indexPath)
-        cell.backgroundColor = UIColor.blue
+        
         return cell
     }
     //每组的头
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let headerView = collectionView .dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: kHeaderID, for: indexPath)
-        headerView.backgroundColor = UIColor.yellow
+        
         return headerView
+    }
+}
+
+// MARK:遵守UICollectionViewDelegate协议
+extension RecommendViewController : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if indexPath.section == 1 {
+            return CGSize(width: kItemW, height: kPrettyItemH)
+        }
+        return CGSize(width: kItemW, height: kNormalItemH)
     }
 }
 
